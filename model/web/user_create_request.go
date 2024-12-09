@@ -1,6 +1,6 @@
 package web
 
 type UserCreateRequest struct {
-	Name  string
-	Email string
+	Name  string `validate:"required"`
+	Email string `validate:"required"`
 }

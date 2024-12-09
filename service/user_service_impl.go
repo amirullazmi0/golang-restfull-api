@@ -7,14 +7,20 @@ import (
 	"amirullazmi/belajar-restfull-api/repository"
 	"context"
 	"database/sql"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type UserServiceImpl struct {
 	UserRepository repository.UserRepository
 	DB             *sql.DB
+	Validate       *validator.Validate
 }
 
 func (service *UserServiceImpl) Create(ctx context.Context, request web.UserCreateRequest) web.UserResponse {
+	err := service.Validate.Struct(request)
+	helper.PanicIfError(err)
+
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
@@ -29,6 +35,9 @@ func (service *UserServiceImpl) Create(ctx context.Context, request web.UserCrea
 	return helper.ToUserResponse(user)
 }
 func (service *UserServiceImpl) Update(ctx context.Context, request web.UserUpdateRequest) web.UserResponse {
+	err := service.Validate.Struct(request)
+	helper.PanicIfError(err)
+
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
